@@ -13,3 +13,8 @@ services:
       - key: APP_KEY
         generateValue: true
       - fromGroup: stagett-env
+databases:
+  - name: stagett-db
+    databaseName: stagett
+    user: stagett
+    plan: starter
