@@ -1,10 +1,8 @@
 services:
   - type: web
     name: stagett
-    env: php
+    env: docker
     plan: starter
-    buildCommand: ./render-build.sh
-    startCommand: php artisan serve --host 0.0.0.0 --port 10000
     envVars:
       - key: APP_ENV
         value: production

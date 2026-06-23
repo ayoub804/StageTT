@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+echo "Running composer"
+composer install --no-dev --working-dir=/var/www/html
+
+echo "Installing npm dependencies for frontend"
+cd /var/www/html/frontend
+npm install
+
+echo "Building React frontend"
+npm run build
+cd /var/www/html
+
+echo "Caching config..."
+php artisan config:cache
+
+echo "Caching routes..."
+php artisan route:cache
+
+echo "Running migrations..."
+php artisan migrate --force
