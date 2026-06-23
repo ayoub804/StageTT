@@ -1,4 +1,4 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM richarvey/nginx-php-fpm:3.4.0
 
 # Install Node.js 20 from Alpine repos
 RUN apk add --no-cache nodejs npm
