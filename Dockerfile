@@ -1,11 +1,7 @@
 FROM richarvey/nginx-php-fpm:3.1.6
 
-# Install Node.js 22 on Alpine
-RUN apk add --no-cache curl bash && \
-    curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.14.0/node-v22.14.0-linux-x64-musl.tar.xz -o /tmp/node.tar.xz && \
-    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
-    rm /tmp/node.tar.xz && \
-    node -v && npm -v
+# Install Node.js 20 from Alpine repos
+RUN apk add --no-cache nodejs npm
 
 COPY . .
 
