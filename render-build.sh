@@ -7,10 +7,13 @@ echo "Starting build process..."
 echo "Installing Composer dependencies..."
 composer install --no-dev --optimize-autoloader
 
-# Install Node.js and npm (if not already installed)
-echo "Installing Node.js..."
-curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
-apt-get install -y nodejs
+# Install Node.js 20 using NVM
+echo "Installing Node.js 20..."
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 20
+nvm use 20
 
 # Build frontend assets
 echo "Building frontend assets..."
@@ -22,6 +25,10 @@ cd ..
 # Set proper permissions
 echo "Setting file permissions..."
 chmod -R 775 storage bootstrap/cache
+
+# Copy built frontend assets to public directory for Laravel to serve
+echo "Copying frontend build to Laravel public..."
+cp -r frontend/dist/* public/
 
 # Run Laravel optimizations
 echo "Caching configuration and routes..."
