@@ -1,12 +1,16 @@
 FROM richarvey/nginx-php-fpm:3.1.6
 
-# Install Node.js and npm
-RUN apk add --no-cache nodejs npm
+# Install Node.js 20 on Alpine
+RUN apk add --no-cache curl bash && \
+    curl -fsSL https://unofficial-builds.nodejs.org/download/release/v20.17.0/node-v20.17.0-linux-x64-musl.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm /tmp/node.tar.xz && \
+    node -v && npm -v
 
 COPY . .
 
 # Image config
-ENV SKIP_COMPOSER 1
+ENV SKIP_COMPOSER 0
 ENV WEBROOT /var/www/html/public
 ENV PHP_ERRORS_STDERR 1
 ENV RUN_SCRIPTS 1
