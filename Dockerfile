@@ -1,23 +1,44 @@
-FROM richarvey/nginx-php-fpm:3.4.0
+FROM php:8.3-fpm-alpine
 
-# Install Node.js 20 from Alpine repos
-RUN apk add --no-cache nodejs npm
+# Install system dependencies
+RUN apk add --no-cache \
+    nginx \
+    curl \
+    bash \
+    git \
+    oniguruma-dev \
+    autoconf \
+    g++ \
+    make \
+    nodejs \
+    npm
 
-COPY . .
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Configure Nginx
+RUN mkdir -p /var/www/html
+COPY conf/nginx/nginx-site.conf /etc/nginx/http.d/default.conf
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Copy application files
+COPY . /var/www/html
+WORKDIR /var/www/html
 
-CMD ["/start.sh"]
+# Make deploy script executable
+RUN chmod +x /var/www/html/scripts/00-laravel-deploy.sh
+
+# Expose ports
+EXPOSE 80
+
+# Set environment variables
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV LOG_CHANNEL=stderr
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Start services and run deployment
+CMD ["sh", "-c", "/var/www/html/scripts/00-laravel-deploy.sh && php-fpm -D && nginx -g 'daemon off;'"]
+

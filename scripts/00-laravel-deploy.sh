@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+set -e
+
 echo "Running composer"
 cd /var/www/html
-composer install --no-dev
+composer install --no-dev --optimize-autoloader
 
 echo "Installing npm dependencies for frontend"
 cd /var/www/html/frontend
@@ -12,6 +14,10 @@ echo "Building React frontend"
 npm run build
 cd /var/www/html
 
+echo "Setting permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 echo "Caching config..."
 php artisan config:cache
 
@@ -19,4 +25,7 @@ echo "Caching routes..."
 php artisan route:cache
 
 echo "Running migrations..."
-php artisan migrate --force
+php artisan migrate --force --no-interaction
+
+echo "Deployment complete!"
+
