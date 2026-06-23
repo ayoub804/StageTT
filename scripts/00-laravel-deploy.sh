@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 echo "Running composer"
-composer install --no-dev --working-dir=/var/www/html
+cd /var/www/html
+composer install --no-dev
 
 echo "Installing npm dependencies for frontend"
 cd /var/www/html/frontend
+rm -rf node_modules package-lock.json
 npm install
 
 echo "Building React frontend"
