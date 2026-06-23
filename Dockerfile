@@ -11,7 +11,10 @@ RUN apk add --no-cache \
     g++ \
     make \
     nodejs \
-    npm
+    npm \
+    postgresql-dev \
+    libpq \
+    icu-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring
